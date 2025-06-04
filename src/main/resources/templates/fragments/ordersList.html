@@ -1,0 +1,54 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>LegalAid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Тема</th>
+        <th>Категорія</th>
+        <th>Статус</th>
+        <th>Дата</th>
+        <th>Файл</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.subject}"></td>
+        <td th:text="${order.category}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${#dates.format(order.sentAt, 'dd.MM.yyyy')}"></td>
+        <td>
+            <a th:if="${order.attachmentFilename}" th:href="@{'/uploads/' + ${order.attachmentFilename}}">Завантажити</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<!--<div class="container">-->
+<!--    <h2 class="mb-4">Список замовлень</h2>-->
+<!--    <table class="table table-hover table-bordered">-->
+<!--        <thead class="table-primary">-->
+<!--        <tr>-->
+<!--            <th>ID</th>-->
+<!--            <th>Опис</th>-->
+<!--            <th>Статус</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="req : ${orders}">-->
+<!--            <td th:text="${req.id}"></td>-->
+<!--            <td th:text="${req.description}"></td>-->
+<!--            <td>-->
+<!--                <span th:classappend="${req.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'"-->
+<!--                      th:text="${req.status}"></span>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+</body>
+</html>

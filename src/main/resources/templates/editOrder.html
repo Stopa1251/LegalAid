@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Створення запиту</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: body}"></div>
+
+<div class="container mt-5">
+    <div class="card mx-auto shadow" style="max-width: 700px;">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Створення нового запиту</h4>
+<!--            <form th:action="@{/orders/my/${id}/edit}" th:object="${order}">-->
+<!--            <form th:action="@{'/orders/my/' + ${id} + '/edit'}" enctype="multipart/form-data" method="post" th:object="${order}">-->
+            <form th:object="${order}">
+                <div class="mb-3">
+                    <label>Тема: <input type="text" th:field="*{subject}" th:value="${subject}" required/></label><br/>
+                </div>
+                <div class="mb-3">
+                    <label>Категорія: <input type="text" th:field="*{category}" th:value="${category}" required/></label><br/>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Опис проблеми</label>
+                    <textarea id="description" rows="4" class="form-control"
+                              th:field="*{description}" th:value="${description}" required></textarea>
+                </div>
+                <label>Файл (необов’язково): <input type="file" name="attachment"/></label><br/>
+                <!--                <div class="mb-3">-->
+                <!--                    <label for="category" class="form-label">Категорія</label>-->
+                <!--                    <select id="category" class="form-select" th:field="*{category}" required>-->
+                <!--                        <option value="">Оберіть категорію</option>-->
+                <!--                        <option value="Сімейне право">Сімейне право</option>-->
+                <!--                        <option value="Цивільне право">Цивільне право</option>-->
+                <!--                        <option value="Кримінальне право">Кримінальне право</option>-->
+                <!--                    </select>-->
+                <!--                </div>-->
+<!--                <button type="submit" class="btn btn-success">Надіслати запит</button>-->
+                <button th:attr="onclick=|updateOrder(${order.id})|" class="btn btn-success">Редагувати запит</button>
+                <a href="/orders/my" class="btn btn-outline-secondary ms-2">Скасувати</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+<script>
+    function updateOrder(orderId) {
+        if (confirm("Ви впевнені, що хочете відредагувати це замовлення?")) {
+            fetch('/orders/my/' + orderId + '/edit', {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Замовлення відредаговано');
+                        window.location.href = '/orders/my';
+                    } else {
+                        alert('Помилка при редагуванні');
+                    }
+                });
+        }
+    }
+
+</script>

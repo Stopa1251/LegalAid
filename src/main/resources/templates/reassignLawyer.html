@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Заміна юриста</title></head>
+<body>
+<h2>Заміна юриста для запиту №<span th:text="${order.id}"></span></h2>
+
+<form th:action="@{'/orders/reassign/' + ${order.id}}" method="post">
+    <label for="lawyer">Новий юрист:</label>
+    <select name="lawyerId" id="lawyer" required>
+        <option th:each="lawyer : ${lawyers}"
+                th:value="${lawyer.id}"
+                th:text="${lawyer.firstName}"
+                th:selected="${lawyer.id == order.assignedLawyer?.id}">
+        </option>
+    </select>
+    <button type="submit">Змінити</button>
+</form>
+
+<a th:href="@{'/orders/view/' + ${order.id}}">Назад</a>
+</body>
+</html>
