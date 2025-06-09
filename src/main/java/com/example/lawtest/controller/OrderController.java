@@ -7,6 +7,7 @@ import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.OrderRepository;
 import com.example.lawtest.repository.MessageRepository;
 import com.example.lawtest.repository.UserRepository;
+import com.example.lawtest.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT_MANAGER', 'CLIENT')")
@@ -31,6 +33,8 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private UserRepository userRepository;
@@ -45,7 +49,17 @@ public class OrderController {
         return "orderDetail";
     }
 
+    @GetMapping("/lawyer")
+    public ResponseEntity<List<Order>> getLawyerOrders(@AuthenticationPrincipal User lawyer) {
+        return ResponseEntity.ok(orderService.getOrdersForLawyer(lawyer.getId()));
+    }
 
+    @GetMapping("/chat/{clientId}")
+    public ResponseEntity<List<Order>> getOrdersInChat(
+            @PathVariable Long clientId,
+            @AuthenticationPrincipal User lawyer) {
+        return ResponseEntity.ok(orderService.getOrdersBetweenLawyerAndClient(lawyer.getId(), clientId));
+    }
 
 //    @PreAuthorize("hasRole('ROLE_LAWYER')")
 //    @GetMapping("/view/{id}")

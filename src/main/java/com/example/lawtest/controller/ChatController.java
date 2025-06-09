@@ -2,13 +2,16 @@ package com.example.lawtest.controller;
 
 import com.example.lawtest.dto.MessageDto;
 import com.example.lawtest.entity.Message;
+import com.example.lawtest.entity.Order;
 import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.MessageRepository;
+import com.example.lawtest.repository.OrderRepository;
 import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping
@@ -27,6 +32,8 @@ public class ChatController {
 //    private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderRepository orderRepository;
 
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
@@ -71,20 +78,27 @@ public class ChatController {
 //    public String chatPage(@PathVariable Long recipientId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
     public String chatPage(@RequestParam Long recipientId, Model model, Principal principal) {
         User currentUser = userService.findByEmail(principal.getName());
+        User recipient = userRepository.getUsersById(recipientId);
+//        List<Message> messages = messageRepository.findMessageBySenderIdAndRecipientId(currentUser.getId(), recipientId);
+        List<Message> messages = messageRepository.findChatHistory(currentUser.getId(), recipientId);
+        List<Order> orders = orderRepository.findByLawyerIdAndClientId(recipientId, currentUser.getId());
 
-        model.addAttribute("recipientId", recipientId);
-//        model.addAttribute("currentUserId",  userRepository.findByEmail(userDetails.getUsername())); // реалізуйте метод
-        model.addAttribute("currentUserId",  currentUser.getId());
+
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("orders", orders);
+        model.addAttribute("recipient", recipient);
+        model.addAttribute("currentUser",  currentUser);
         return "chat";
     }
 
-    @MessageMapping("/chat.send.{orderId}")
-    public void send(@DestinationVariable Long orderId, MessageDto messageDto, Principal principal) {
+    @MessageMapping("/chat.send.{chatId}")
+    public void send(@DestinationVariable String chatId, @Payload MessageDto messageDto, Principal principal) {
         User sender = userRepository.findByEmail(principal.getName()).orElseThrow();
 
         Message message = new Message();
         message.setSenderId(sender.getId());
-        message.setRecipientId(messageDto.getRecipientId()); // або отримай об'єкт користувача, якщо треба
+        message.setRecipientId(messageDto.getRecipientId());
         message.setContent(messageDto.getContent());
         message.setSentAt(LocalDateTime.now());
 
@@ -94,6 +108,6 @@ public class ChatController {
         messageDto.setSentAt(LocalDateTime.now().toString());
 //        messageDto.setContent(LocalDateTime.now().toString());
 
-        messagingTemplate.convertAndSend("/topic/chat/" + orderId, messageDto);
+        messagingTemplate.convertAndSend("/topic/chat/" + chatId, messageDto);
     }
 }

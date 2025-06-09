@@ -1,8 +1,6 @@
 package com.example.lawtest.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
@@ -16,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
     @Id
@@ -34,7 +33,6 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-
     @Column(nullable = true)
     private String phoneNumber;
 
@@ -52,102 +50,39 @@ public class User {
     private Date createdAt;
 
 //    @Column(name = "order_id")
-    @OneToMany
-    @JoinColumn(name = "order_id")
-    private List<Order> orders;
+//    @OneToMany
+//    @JoinColumn(name = "id")
+//    private List<Order> orders;
+
+
 //    @Column(name = "review_id")
-    @OneToMany
-    @JoinColumn(name = "review_id")
-    private List<Review> reviews;
+//    @OneToMany
+//    @JoinColumn(name = "id")
+//    private List<Review> reviews;
+
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    private List<Review> reviewsSent;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    private List<Review> reviewsReceived;
+
+    private boolean active = true;
+
 
     public User setUser(User user) {
         this.firstName = user.firstName;
         this.lastName = user.lastName;
         this.phoneNumber = user.phoneNumber;
         this.verified = user.verified;
-        this.role = user.role;
         this.address = user.address;
         this.createdAt = user.createdAt;
-        this.orders = user.orders;
-        this.reviews = user.reviews;
-        this.experience = user.experience;
-        this.portfolio = user.portfolio;
-        this.specializations = user.specializations;
-        this.rating = user.rating;
-        this.licenseNo = user.licenseNo;
         this.profileImagePath = user.profileImagePath;
         this.active = user.active;
 
         return this;
     }
 
-    // STOPA TEST
-    private float experience;
-    @Lob
-    private String portfolio;
-    @OneToMany
-    @JoinColumn(name = "specialization_id")
-    private List<Specialization> specializations;
-    private double rating;
-    private String licenseNo;
-
-    public float getExperience() {
-        return experience;
-    }
-
-    public void setExperience(float experience) {
-        this.experience = experience;
-    }
-
-    public String getPortfolio() {
-        return portfolio;
-    }
-
-    public void setPortfolio(String portfolio) {
-        this.portfolio = portfolio;
-    }
-
-    public List<Specialization> getSpecializations() {
-        return specializations;
-    }
-
-    public void setSpecializations(List<Specialization> specializations) {
-        this.specializations = specializations;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    public String getLicenseNo() {
-        return licenseNo;
-    }
-
-    public void setLicenseNo(String licenseNo) {
-        this.licenseNo = licenseNo;
-    }
-    // STOPA TEST
-
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
 
     public String getEmail() {
         return email;
@@ -269,18 +204,7 @@ public class User {
 //        this.avatar = avatar;
 //    }
 
-    private boolean active = true;
 
-
-    @Transient
-    public String getSpecializationsString() {
-        if (specializations == null || specializations.isEmpty()) {
-            return "Немає спеціалізацій";
-        }
-        return specializations.stream()
-                .map(Specialization::getSpecializationName)
-                .collect(Collectors.joining(", "));
-    }
 
     public enum Role implements GrantedAuthority {
         ROLE_CLIENT, ROLE_LAWYER, ROLE_ADMIN, ROLE_SUPPORT;

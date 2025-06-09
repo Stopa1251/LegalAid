@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+//    Optional<User.Role> getRoleByEmail(String email);
     boolean existsByEmail(String email);
 
 //    List<User> findByRole(User.Role role, Limit limit);
@@ -20,9 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.role = 'ROLE_LAWYER' AND " +
             "(SELECT COUNT(r) FROM Order r WHERE r.assignedLawyer = u AND r.status = 'ACTIVE') < :maxActive")
     List<User> findAvailableLawyers(@Param("maxActive") int maxActive);
-
-    @Query("SELECT u FROM User u WHERE u.role = 'ROLE_LAWYER'")
-    List<User> findAllLawyers();
+//
+//    @Query("SELECT u FROM User u WHERE u.role = 'ROLE_LAWYER'")
+//    List<User> findAllLawyers();
 
 //    findByRole("LAWYER")
 
@@ -34,4 +35,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT l FROM User l JOIN FETCH l.specializations WHERE l.role = 'ROLE_LAWYER'")
     List<User> findAllWithSpecializations();
+
+    User getUsersById(Long id);
+
+
+    @Query("SELECT u.role FROM User u WHERE u.email = :email")
+    Optional<User.Role> findRoleByEmail(@Param("email") String email);
 }

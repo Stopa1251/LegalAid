@@ -51,8 +51,6 @@
 <!--</script>-->
 
 
-
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -67,22 +65,27 @@
             padding: 1rem;
             border-radius: 0.5rem;
         }
+
         .message {
             margin-bottom: 0.8rem;
         }
+
         .message.you {
             text-align: right;
         }
+
         .message-content {
             display: inline-block;
             padding: 0.6rem 1rem;
             border-radius: 1rem;
             max-width: 70%;
         }
+
         .message.you .message-content {
             background-color: #0d6efd;
             color: white;
         }
+
         .message.other .message-content {
             background-color: #e9ecef;
         }
@@ -99,11 +102,21 @@
 
     <div class="chat-container mb-3" id="chatBox">
         <div th:each="msg : ${messages}">
-            <div th:class="'message ' + (${msg.senderId} == ${recipientId} ? 'you' : 'other')">
+            <div th:class="'message ' + (${msg.senderId} == ${recipient.id} ? 'you' : 'other')">
                 <div class="message-content" th:text="${msg.content}"></div>
             </div>
         </div>
     </div>
+
+
+        <div class="mt-3">
+            <h5>Ваші замовлення до цього юриста:</h5>
+            <ul class="list-group">
+                <li class="list-group-item" th:each="order : ${orders}">
+                    <b th:text="${order.subject}"></b> — <span th:text="${order.status}"></span>
+                </li>
+            </ul>
+        </div>
 
     <div class="d-flex">
         <input type="text" id="messageInput" class="form-control me-2" placeholder="Напишіть повідомлення...">
@@ -112,6 +125,27 @@
 </div>
 
 
+<!--<div class="chat-container mb-3" id="chatBox">-->
+<!--    <div th:each="msg : ${messages}">-->
+<!--        <div th:class="'message ' + (${msg.senderId} == ${recipient.id} ? 'you' : 'other')">-->
+<!--            <div class="message-content" th:text="${msg.content}"></div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    <div class="mt-3">-->
+<!--        <h5>Ваші замовлення до цього юриста:</h5>-->
+<!--        <ul class="list-group">-->
+<!--            <li class="list-group-item" th:each="order : ${orders}">-->
+<!--                <b th:text="${order.subject}"></b> — <span th:text="${order.status}"></span>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+<!--    <div class="d-flex">-->
+<!--        <input type="text" id="messageInput" class="form-control me-2" placeholder="Напишіть повідомлення...">-->
+<!--        <button onclick="send()" class="btn btn-primary">Надіслати</button>-->
+<!--    </div>-->
+<!--</div>-->
 
 
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
@@ -142,20 +176,72 @@
 <!--</script>-->
 
 
+<!--<script th:inline="javascript">-->
+<!--    // const recipientId = /*[[${recipientId}]]*/ 0;-->
+<!--    // const currentUserId = /*[[${currentUserId}]]*/ 0;-->
+<!--</script>-->
+
+<!--<script th:inline="javascript">-->
+<!--    const recipientId = /*[[${recipient.id}]]*/ {};-->
+<!--    const currentUser = /*[[${currentUser.id}]]*/ {};-->
+<!--</script>-->
+
+
+<!--<script>-->
+<!--    let stompClient = null;-->
+
+<!--    function connect() {-->
+<!--        const socket = new SockJS('/ws');-->
+<!--        stompClient = Stomp.over(socket);-->
+<!--        stompClient.connect({}, function () {-->
+<!--            stompClient.subscribe('/topic/chat/' + recipientId, function (messageOutput) {-->
+<!--                const message = JSON.parse(messageOutput.body);-->
+<!--                displayMessage(message);-->
+<!--            });-->
+<!--        });-->
+<!--    }-->
+
+<!--    function send() {-->
+<!--        const content = document.getElementById('messageInput').value;-->
+
+<!--        const message = {-->
+<!--            senderId: currentUser.id,-->
+<!--            recipientId: recipientId,-->
+<!--            content: content-->
+<!--        };-->
+<!--        stompClient.send("/app/chat.send." + recipientId, {}, JSON.stringify(message));-->
+<!--        document.getElementById('messageInput').value = '';-->
+<!--    }-->
+
+<!--    function displayMessage(message) {-->
+<!--        const chatBox = document.getElementById('chatBox');-->
+<!--        const msg = document.createElement('div');-->
+<!--        msg.innerText = message.senderId + ": " + message.content;-->
+<!--        // msg.innerText = message.content;-->
+<!--        chatBox.appendChild(msg);-->
+<!--    }-->
+
+<!--    connect();-->
+<!--</script>-->
+
 
 <script th:inline="javascript">
-    const recipientId = /*[[${recipientId}]]*/ 0;
-    const currentUserId = /*[[${currentUserId}]]*/ 0;
+    const recipientId = /*[[${recipient.id}]]*/ {};
+    const currentUserId = /*[[${currentUser.id}]]*/ {};
 </script>
 
 <script>
     let stompClient = null;
 
+    const chatId = [currentUserId, recipientId].sort((a, b) => a - b).join('_');
+
     function connect() {
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
+
         stompClient.connect({}, function () {
-            stompClient.subscribe('/topic/chat/' + recipientId, function (messageOutput) {
+            const topic = '/topic/chat/' + chatId;
+            stompClient.subscribe(topic, function (messageOutput) {
                 const message = JSON.parse(messageOutput.body);
                 displayMessage(message);
             });
@@ -163,22 +249,41 @@
     }
 
     function send() {
-        const content = document.getElementById('messageInput').value;
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        if (!content) return;
 
         const message = {
             senderId: currentUserId,
             recipientId: recipientId,
             content: content
         };
-        stompClient.send("/app/chat.send." + recipientId, {}, JSON.stringify(message));
-        document.getElementById('messageInput').value = '';
+
+        stompClient.send("/app/chat.send." + chatId, {}, JSON.stringify(message));
+        input.value = '';
     }
 
     function displayMessage(message) {
         const chatBox = document.getElementById('chatBox');
-        const msg = document.createElement('div');
-        msg.innerText = message.senderId + ": " + message.content;
-        chatBox.appendChild(msg);
+
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message');
+
+        if (message.senderId === currentUserId) {
+            msgDiv.classList.add('you');
+        } else {
+            msgDiv.classList.add('other');
+        }
+
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('message-content');
+        contentDiv.innerText = message.content;
+
+        msgDiv.appendChild(contentDiv);
+        chatBox.appendChild(msgDiv);
+
+        // Прокрутка донизу
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     connect();

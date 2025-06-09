@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'LAWYER')")
 @Controller
-@RequestMapping("/lawyer")
+@RequestMapping("/user")
 public class LawyerController {
 
     @Autowired
@@ -93,40 +93,6 @@ public class LawyerController {
 ////    }
 
 
-    @GetMapping("/profile/edit")
-    public String showEditProfileForm( @AuthenticationPrincipal UserDetails userDetails,
-                                  Model model) {
-        User lawyer = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        model.addAttribute("lawyer", lawyer);
-        return "editLawyerProfile";
-    }
-
-
-    @PostMapping("/profile/edit")
-    public String updateProfile(@ModelAttribute User lawyer,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                @RequestParam(value = "avatar", required = false) MultipartFile avatarFile
-    ) throws IOException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        if (user == null) return "redirect:/login";
-
-        user.setUser(lawyer);
-
-
-//        if (avatarFile != null && !avatarFile.isEmpty()) {
-//            String filename = UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
-//            Path uploadPath = Paths.get("uploads");
-//            if (!Files.exists(uploadPath)) {
-//                Files.createDirectories(uploadPath);
-//            }
-//            avatarFile.transferTo(uploadPath.resolve(filename));
-//            user.setProfileImagePath(filename);
-//        }
-
-        userRepository.save(user);
-        return "redirect:/lawyer/profile";
-    }
-
 //
 //    @PostMapping("/edit/{id}")
 //    public String updateLawyer(@PathVariable Long id, @ModelAttribute User lawyer) {
@@ -134,14 +100,6 @@ public class LawyerController {
 //        userRepository.save(lawyer);
 //        return "redirect:/lawyer/profile";
 //    }
-
-
-    @GetMapping("/profile")
-    public String showProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        model.addAttribute("lawyer", user);
-        return "lawyerProfile";
-    }
 
 
 //
@@ -185,4 +143,58 @@ public class LawyerController {
 //            }
 //        }
 //    }
+
+
+
+
+
+
+
+
+
+
+//
+//
+//@GetMapping("/profile/edit")
+//public String showEditProfileForm( @AuthenticationPrincipal UserDetails userDetails,
+//                                   Model model) {
+//    User lawyer = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+//    model.addAttribute("lawyer", lawyer);
+//    return "editLawyerProfile";
+//}
+//
+//
+//    @PostMapping("/profile/edit")
+//    public String updateProfile(@ModelAttribute User lawyer,
+//                                @AuthenticationPrincipal UserDetails userDetails,
+//                                @RequestParam(value = "avatar", required = false) MultipartFile avatarFile
+//    ) throws IOException {
+//        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+//        if (user == null) return "redirect:/login";
+//
+//        user.setUser(lawyer);
+//
+//
+////        if (avatarFile != null && !avatarFile.isEmpty()) {
+////            String filename = UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
+////            Path uploadPath = Paths.get("uploads");
+////            if (!Files.exists(uploadPath)) {
+////                Files.createDirectories(uploadPath);
+////            }
+////            avatarFile.transferTo(uploadPath.resolve(filename));
+////            user.setProfileImagePath(filename);
+////        }
+//
+//        userRepository.save(user);
+//        return "redirect:/lawyer/profile";
+//    }
+//
+//
+//    @GetMapping("/profile")
+//    public String showProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+//        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+//        model.addAttribute("lawyer", user);
+//        return "lawyerProfile";
+//    }
+
 }

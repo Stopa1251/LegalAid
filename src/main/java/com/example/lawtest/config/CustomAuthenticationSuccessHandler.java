@@ -25,12 +25,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 //            response.sendRedirect("/admin/dashboard");
         } else if (roles.contains("ROLE_LAWYER")) {
 //            response.sendRedirect("/lawyer/dashboard");
-            response.sendRedirect("/lawyer/profile");
-//        } else if (roles.contains("ROLE_SUPPORT")) {
+            response.sendRedirect("/orders");
+        } else if (roles.contains("ROLE_SUPPORT")) {
             response.sendRedirect("/support/dashboard");
         } else if (roles.contains("ROLE_CLIENT")) {
 //            response.sendRedirect("/client/dashboard");
-            response.sendRedirect("/client/profile");
+            response.sendRedirect("/lawyers");
         } else {
             response.sendRedirect("/dashboard"); // fallback
         }

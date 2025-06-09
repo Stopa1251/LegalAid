@@ -10,13 +10,11 @@
 <div class="container mt-5">
     <div class="card mx-auto shadow" style="max-width: 600px;">
         <div class="card-body text-center">
-            <h5>Заголовок</h5>
-            <div th:text="${order.subject}"></div>
-            <h5>КатегоріЇ</h5>
-            <div th:text="${order.category}"></div>
+            <h5 th:text="${order.subject}"></h5>
+            <div>Галузь права: <span th:text="${order.specialization.specializationName}"></span></div>
+            <div>Очікувана вартість: <h5> <span th:classappend="'badge bg-secondary'" th:text="${order.price}"></span> </h5></div>
             <h5>Опис</h5>
             <div th:text="${order.description}"></div>
-            <h5>Статус</h5>
             <span th:classappend="${order.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'"
                   th:text="${order.status}"></span>
             <!--        <div>Файл</div>-->
@@ -24,7 +22,8 @@
 
             <br><br>
             <a th:attr="onclick=|deleteOrder(${order.id})|" class="btn btn-outline-secondary ms-2">Видалити</a>
-            <a class="btn btn-primary w-100" th:href="@{'/profile/orders/my/' + ${order.id} + '/edit'}">Редагувати</a>
+            <br><br>
+            <a class="btn btn-primary w-100" th:href="@{'/user/orders/' + ${order.id} + '/edit'}">Редагувати</a>
         </div>
     </div>
 </div>
@@ -35,13 +34,13 @@
 <script>
     function deleteOrder(orderId) {
         if (confirm("Ви впевнені, що хочете видалити це замовлення?")) {
-            fetch('/profile/orders/my/' + orderId, {
+            fetch('/user/orders/' + orderId, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
                         alert('Замовлення видалено');
-                        window.location.href = '/profile/orders/my/';
+                        window.location.href = '/user/orders';
                     } else {
                         alert('Помилка при видаленні');
                     }

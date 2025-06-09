@@ -28,8 +28,8 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**").permitAll()
-//                        .requestMatchers("/orders/create").hasRole("CLIENT")
+                        .requestMatchers("/", "/orders", "/lawyers", "/login", "/register", "/css/**").permitAll()
+                        .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

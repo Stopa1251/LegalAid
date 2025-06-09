@@ -34,7 +34,7 @@
 
 <div class="container mt-5">
     <h2>Редагувати профіль юриста</h2>
-    <form th:action="@{'/lawyers/edit/' + ${lawyer.id}}" th:object="${lawyer}" method="post">
+    <form th:action="@{/user/profile/edit}" th:object="${user}" method="post">
         <div class="mb-3">
             <label for="firstName">Ім'я</label>
             <input type="text" th:field="*{firstName}" class="form-control" id="firstName">

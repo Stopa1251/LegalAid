@@ -52,20 +52,21 @@
         <div class="card mx-auto shadow order"  th:attr="onclick=|redirectToOrder(${order.id})|" style="max-width: 450px;">
             <div class="card-body">
                 <h5 th:text="${order.subject}"></h5>
-                <div>Ціна:</div>
-                <div th:text="${order.description}"></div>
-                <div th:text="${order.category}"></div>
-                <div th:text="${#dates.format(order.sentAt, 'dd-MM-yyyy HH:mm')}"></div>
-                <div>
-                    <span th:classappend="${order.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'"
-                          th:text="${order.status}"></span>
-                </div>
+                <h5 th:classappend="'badge bg-secondary'" th:text="${order.price}"> </h5>
+                <h5 th:text="${order.specialization.specializationName}" th:classappend="'badge bg-secondary'"></h5>
+                <h5 th:classappend="${order.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'" th:text="${order.status}"></h5>
+
+                <div th:text="${#strings.abbreviate(order.description, 100)}"></div>
+                <div th:text="${#dates.format(order.createdAt, 'dd-MM-yyyy HH:mm')}"></div>
+
 
             </div>
         </div>
     </div>
-    <a class="btn" href="/profile/orders/create">Створити замовлення</a> |
-    <a class="btn" href="/profile">Особистий кабінет</a>
+    <div style="text-align: center;">
+        <a class="btn" href="/user/orders/create">Створити замовлення</a> |
+        <a class="btn" href="/profile">Особистий кабінет</a>
+    </div>
 </div>
 </body>
 </html>
@@ -75,6 +76,6 @@
 
 <script>
     function redirectToOrder(orderId) {
-        window.location.href = '/profile/orders/my/' + orderId;
+        window.location.href = '/user/orders/' + orderId;
     }
 </script>

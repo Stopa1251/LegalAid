@@ -15,8 +15,9 @@
                 <h5 th:text="${order.subject}"></h5>
                 <div>Ціна:</div>
                 <div th:text="${#strings.abbreviate(order.description, 100)}"></div>
-                <div th:text="${order.category}"></div>
-                <div th:text="${#dates.format(order.sentAt, 'dd-MM-yyyy HH:mm')}"></div>
+                <div th:text="${order.specialization.specializationName}"></div>
+                <div th:text="${#dates.format(order.createdAt, 'dd-MM-yyyy HH:mm')}"></div>
+                <label>Очікувана вартість:                4000</label><br/>
                 <div>
                     <span th:classappend="${order.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'"
                           th:text="${order.status}"></span>

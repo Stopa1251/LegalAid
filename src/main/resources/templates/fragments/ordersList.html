@@ -19,7 +19,7 @@
         <td th:text="${order.subject}"></td>
         <td th:text="${order.category}"></td>
         <td th:text="${order.status}"></td>
-        <td th:text="${#dates.format(order.sentAt, 'dd.MM.yyyy')}"></td>
+        <td th:text="${#dates.format(order.createdAt, 'dd.MM.yyyy')}"></td>
         <td>
             <a th:if="${order.attachmentFilename}" th:href="@{'/uploads/' + ${order.attachmentFilename}}">Завантажити</a>
         </td>

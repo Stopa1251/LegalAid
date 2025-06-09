@@ -11,30 +11,57 @@
     <div class="card mx-auto shadow" style="max-width: 700px;">
         <div class="card-body">
             <h4 class="card-title mb-4">Створення нового запиту</h4>
-            <form th:action="@{/orders/create}" method="post" enctype="multipart/form-data" th:object="${order}">
+            <form th:action="@{/user/orders/create}" method="post" enctype="multipart/form-data" th:object="${order}">
                 <div class="mb-3">
-                    <label>Тема: <input type="text" th:field="*{subject}" required/></label><br/>
+                    <label>Заголовок: <input type="text" th:field="*{subject}" required/></label><br/>
                 </div>
                 <div class="mb-3">
-                    <label>Категорія: <input type="text" th:field="*{category}" required/></label><br/>
+<!--                    <label>Категорія: <input type="text" th:field="*{specialization}" required/></label><br/>-->
+                        <label for="specialization">Спеціалізація:</label>
+                        <select th:field="*{specialization}" id="specialization">
+                            <option th:each="spec : ${specializations}"
+                                    th:value="${spec.id}"
+                                    th:text="${spec.specializationName}">
+                            </option>
+                        </select>
+                </div>
+                <div class="mb-3">
+                    <label>Очікувана вартість (в гривнях): <input type="text" th:field="*{price}"
+                                                                  required/></label><br/>
+                </div>
+                <div class="mb-3">
+                    <label>Формат спілкування:
+                        <select th:field="*{communicationFormat}" id="communicationFormat">
+                            <option th:each="format : ${communicationFormats}"
+                                    th:value="${format}"
+                                    th:text="${format}">Формат
+                            </option>
+                        </select>
+                    </label><br/>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"  th:field="*{publicView}" id="publicView">
+                    <label class="form-check-label" for="publicView">
+                        Відобразити в загальному списку
+                    </label>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Опис проблеми</label>
                     <textarea id="description" rows="4" class="form-control"
                               th:field="*{description}" required></textarea>
                 </div>
-                    <label>Файл (необов’язково): <input type="file" name="attachment"/></label><br/>
-<!--                <div class="mb-3">-->
-<!--                    <label for="category" class="form-label">Категорія</label>-->
-<!--                    <select id="category" class="form-select" th:field="*{category}" required>-->
-<!--                        <option value="">Оберіть категорію</option>-->
-<!--                        <option value="Сімейне право">Сімейне право</option>-->
-<!--                        <option value="Цивільне право">Цивільне право</option>-->
-<!--                        <option value="Кримінальне право">Кримінальне право</option>-->
-<!--                    </select>-->
-<!--                </div>-->
+                <label>Файл (необов’язково): <input type="file" name="attachment"/></label><br/>
+                <!--                <div class="mb-3">-->
+                <!--                    <label for="category" class="form-label">Категорія</label>-->
+                <!--                    <select id="category" class="form-select" th:field="*{category}" required>-->
+                <!--                        <option value="">Оберіть категорію</option>-->
+                <!--                        <option value="Сімейне право">Сімейне право</option>-->
+                <!--                        <option value="Цивільне право">Цивільне право</option>-->
+                <!--                        <option value="Кримінальне право">Кримінальне право</option>-->
+                <!--                    </select>-->
+                <!--                </div>-->
                 <button type="submit" class="btn btn-success">Надіслати запит</button>
-                <a href="/orders" class="btn btn-outline-secondary ms-2">Скасувати</a>
+                <a href="/user/orders" class="btn btn-outline-secondary ms-2">Скасувати</a>
             </form>
         </div>
     </div>
@@ -42,27 +69,3 @@
 </body>
 </html>
 
-
-
-
-
-<!-- templates/create-request.html -->
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <title>Новий запит</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<h1>Створення юридичного запиту</h1>-->
-
-<!--<form th:action="@{/orders/create}" method="post" enctype="multipart/form-data" th:object="${request}">-->
-<!--    <label>Тема: <input type="text" th:field="*{subject}" required/></label><br/>-->
-<!--    <label>Категорія: <input type="text" th:field="*{category}" required/></label><br/>-->
-<!--    <label>Опис: <textarea th:field="*{description}" required></textarea></label><br/>-->
-<!--    <label>Файл (необов’язково): <input type="file" name="attachment"/></label><br/>-->
-<!--    <button type="submit">Надіслати</button>-->
-<!--</form>-->
-
-<!--<a href="/profile">Назад</a>-->
-<!--</body>-->
-<!--</html>-->

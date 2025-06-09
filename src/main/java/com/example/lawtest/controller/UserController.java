@@ -1,7 +1,9 @@
 package com.example.lawtest.controller;
 
+import com.example.lawtest.entity.Lawyer;
 import com.example.lawtest.entity.Order;
 import com.example.lawtest.entity.User;
+import com.example.lawtest.repository.LawyerRepository;
 import com.example.lawtest.repository.OrderRepository;
 import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.service.UserService;
@@ -23,13 +25,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'CLIENT')")
+//@PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT', 'CLIENT')")
 @Controller
-@RequestMapping("/client")
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LawyerRepository lawyerRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -40,25 +44,35 @@ public class UserController {
     @GetMapping("/profile")
     public String showProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        model.addAttribute("user", user);
-        return "/clientProfile";
+
+        if (user.getRole() == User.Role.ROLE_CLIENT) {
+            model.addAttribute("user", user);
+            return "/clientProfile";
+        } else if (user.getRole() == User.Role.ROLE_LAWYER) {
+            Lawyer lawyer = lawyerRepository.findByEmail(userDetails.getUsername()).orElse(null);
+            model.addAttribute("lawyer", lawyer);
+            return "/lawyerProfile";
+        } else {
+            return "redirect:/login";
+        }
+
+
     }
+
     @PostMapping("/profile/edit")
     public String updateProfile(
+            @ModelAttribute Lawyer user,
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("firstName") String firstName,
-            @RequestParam("lastName") String lastName,
-            @RequestParam("email") String email,
             @RequestParam(value = "avatar", required = false) MultipartFile avatarFile
     ) throws IOException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        if (user == null) return "redirect:/login";
+        User userSystem = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+        if (userSystem == null) return "redirect:/login";
 
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
 
-        // Завантаження аватара
+        if (!userSystem.getEmail().equals(user.getEmail())) {
+            userSystem.setEmail(user.getEmail());
+        }
+
         if (avatarFile != null && !avatarFile.isEmpty()) {
             String filename = UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
             Path uploadPath = Paths.get("uploads");
@@ -69,17 +83,36 @@ public class UserController {
             user.setProfileImagePath(filename);
         }
 
-        userRepository.save(user);
-        return "redirect:/profile";
+        if (userSystem.getRole() == User.Role.ROLE_CLIENT) {
+            userSystem.setUser(user);
+            userRepository.save(userSystem);
+        }
+        else if (userSystem.getRole() == User.Role.ROLE_LAWYER) {
+            Lawyer lawyer = lawyerRepository.findByEmail(userDetails.getUsername()).orElse(null);
+            if (lawyer == null) return "redirect:/login";
+            lawyer.setLawyer(user);
+            lawyerRepository.save(lawyer);
+        }
+
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/profile/edit")
     public String showEditProfileForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        model.addAttribute("user", user);
-        return "editProfile";
-    }
 
+
+        if (user.getRole() == User.Role.ROLE_CLIENT) {
+            model.addAttribute("user", user);
+            return "/editClientProfile";
+        } else if (user.getRole() == User.Role.ROLE_LAWYER && user instanceof Lawyer) {
+            Lawyer lawyer = lawyerRepository.findByEmail(userDetails.getUsername()).orElse(null);
+            model.addAttribute("user", lawyer);
+            return "/editLawyerProfile";
+        } else {
+            return "redirect:/login";
+        }
+    }
 
 
 //    @PostMapping("/lawyers/save")
@@ -124,73 +157,4 @@ public class UserController {
 //    }
 
 
-
-
-
-
-
-    @GetMapping("/orders/create")
-    public String createOrder(Model model) {
-        model.addAttribute("order", new Order());
-        return "createOrder";
-    }
-
-    //    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT_MANAGER', 'CLIENT')")
-    @PostMapping("/orders/create")
-    public String saveOrder(
-            @ModelAttribute Order order,
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("attachment") MultipartFile file
-    ) throws IOException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        order.setClient(user);
-
-        if (!file.isEmpty()) {
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads");
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            file.transferTo(uploadPath.resolve(filename));
-            order.setAttachmentFilename(filename);
-        }
-
-        orderRepository.save(order);
-        return "redirect:/orders";
-    }
-
-    @GetMapping("/orders")
-    public String myOrders(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        model.addAttribute("orders", orderRepository.findByClient(user));
-        return "myOrders";
-    }
-
-    @GetMapping("/orders/{id}")
-    public String myOrderDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        Order order = orderRepository.getOrderById(id).orElse(null);
-        model.addAttribute("order", order);
-        return "myOrderDetail";
-    }
-
-
-    @DeleteMapping("/orders/{id}")
-    public ResponseEntity<?> deleteOrder(@PathVariable("id") Long id) {
-        orderRepository.deleteById(id);
-        return ResponseEntity.ok(id);
-    }
-
-    @GetMapping("/orders/{id}/edit")
-    public String editOrder(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("order", orderRepository.getOrderById(id).orElse(null));
-        return "editOrder";
-    }
-
-    @PostMapping("/orders/{id}/edit")
-    public ResponseEntity<?> updateOrder(@PathVariable("id") Long id,
-//                                         @RequestBody Order order) {
-                                         @ModelAttribute Order order) {
-        orderRepository.save(order);
-        return ResponseEntity.ok(id);
-    }
 }

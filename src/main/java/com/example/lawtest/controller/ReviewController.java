@@ -5,7 +5,9 @@ import com.example.lawtest.entity.Review;
 import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.ReviewRepository;
 import com.example.lawtest.repository.UserRepository;
+import com.example.lawtest.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -24,30 +27,29 @@ import java.util.UUID;
 public class ReviewController {
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private ReviewService reviewService;
 
-    @GetMapping("/{id}/create")
+    @GetMapping("/{receiverId}/create")
     public String createOrder(Model model) {
-        model.addAttribute("order", new Review());
+        model.addAttribute("review", new Review());
         return "createReview";
     }
 
     //    @PreAuthorize("hasRole('ROLE_LAWYER')")
-    @PostMapping("{id}/create")
+    @PostMapping("{receiverId}/create")
     public String saveOrder(
             @ModelAttribute Review review,
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long id
     ) throws IOException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-        review.setSender(user);
-        review.setReceiver(userRepository.findById(id).orElse(null));
-
-        reviewRepository.save(review);
+        Review created = reviewService.addReview(review.getSender(), review.getReceiver(), review.getComment(), review.getRating());
         return "redirect:/reviews";
     }
+
+//    @GetMapping("/{receiverId}")
+//    public String getReviews(@PathVariable Long receiverId,  @AuthenticationPrincipal UserDetails userDetails, Model model) {
+//        return "addReview";
+//    }
 }
 
 

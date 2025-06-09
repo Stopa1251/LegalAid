@@ -7,6 +7,7 @@ import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.security.JwtAuthenticationResponse;
 import com.example.lawtest.security.JwtTokenProvider;
 import com.example.lawtest.service.UserService;
+import com.example.lawtest.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -54,8 +55,6 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Email is already in use!");
             }
 
-            System.out.println(registrationRequest);
-
             userService.register(registrationRequest);
 
             Authentication authentication = authenticationManager.authenticate(
@@ -66,12 +65,11 @@ public class AuthController {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
-//
-////            return "redirect:/login";
+
             return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return ResponseEntity.badRequest().body("Email is already in use!");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

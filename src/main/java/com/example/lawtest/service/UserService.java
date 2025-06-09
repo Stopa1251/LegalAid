@@ -6,7 +6,9 @@ import com.example.lawtest.entity.User;
 import java.util.List;
 
 public interface UserService {
-    User register(UserRegistrationDto dto);
+    void register(UserRegistrationDto dto);
+
+    //    User register(UserRegistrationDto dto);
     User findByEmail(String email);
 
     List<User> searchUsers(String query);

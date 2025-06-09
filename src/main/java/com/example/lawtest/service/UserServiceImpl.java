@@ -1,7 +1,9 @@
 package com.example.lawtest.service;
 
 import com.example.lawtest.dto.UserRegistrationDto;
+import com.example.lawtest.entity.Lawyer;
 import com.example.lawtest.entity.User;
+import com.example.lawtest.repository.LawyerRepository;
 import com.example.lawtest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +28,32 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private LawyerRepository lawyerRepository;
 
     @Override
-    public User register(UserRegistrationDto dto) {
+    public void register(UserRegistrationDto dto) {
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 
-        User user = new User();
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setRole(User.Role.valueOf(dto.getRole()));
-
-        return userRepository.save(user);
+        if (dto.getRole().equals(User.Role.ROLE_LAWYER)) {
+            Lawyer lawyer = new Lawyer();
+            lawyer.setFirstName(dto.getFirstName());
+            lawyer.setLastName(dto.getLastName());
+            lawyer.setEmail(dto.getEmail());
+            lawyer.setPassword(passwordEncoder.encode(dto.getPassword()));
+            lawyer.setRole(User.Role.ROLE_LAWYER);
+            lawyerRepository.save(lawyer);
+        } else {
+            User user = new User();
+            user.setFirstName(dto.getFirstName());
+            user.setLastName(dto.getLastName());
+            user.setEmail(dto.getEmail());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user.setRole(User.Role.ROLE_CLIENT);
+            userRepository.save(user);
+        }
     }
 
     @Override
@@ -72,7 +85,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    //
 
     public String saveProfileImage(MultipartFile file, Long lawyerId) throws IOException {
         if (file == null || file.isEmpty()) return null;

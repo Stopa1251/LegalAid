@@ -22,15 +22,28 @@ public class Review {
 
 
 
-    @ManyToOne
+//    @ManyToOne
+//    @JoinColumn(name = "sender_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private User sender;
+
+//    @ManyToOne
+//    @JoinColumn(name = "receiver_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private User receiver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private User sender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private User receiver;
 
+
+
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false, updatable = false)
     private Date sentAt = new Date();
 
 
@@ -81,5 +94,11 @@ public class Review {
 
     public void setReceiver(User receiver) {
         this.receiver = receiver;
+    }
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.sentAt = new Date();
     }
 }

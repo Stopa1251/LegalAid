@@ -41,10 +41,11 @@
 <!--                         alt="Аватар"-->
 <!--                         class="rounded-circle"-->
 <!--                         style="width: 60px; height: 60px; object-fit: cover;">-->
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle mb-3" width="120">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 th:text="${lawyer.firstName + ' ' + lawyer.lastName}"></h5>
+                        <h5 th:text="|${lawyer.firstName} ${lawyer.lastName}|"></h5>
                         <div>Телефон: <span th:text="${lawyer.phoneNumber}">Немає</span></div>
                         <div>Досвід: <span th:text="${lawyer.experience}"></span> років</div>
                         <div>Рейтинг: <span th:text="${lawyer.rating}"></span></div>

@@ -9,10 +9,10 @@
 <div th:replace="~{fragments/header :: body}"></div>
 
 <div class="container mt-5">
-    <div class="card mx-auto shadow" style="max-width: 600px;">
+<div class="card mx-auto shadow" style="max-width: 600px;">
         <div class="card-body">
             <h4 class="card-title mb-4">Редагування профілю</h4>
-            <form th:action="@{/profile/edit}" method="post" th:object="${user}">
+            <form th:action="@{/user/profile/edit}" method="post" th:object="${user}">
                 <div class="mb-3">
                     <label for="firstName" class="form-label">Ім'я</label>
                     <input type="text" id="firstName" class="form-control" th:field="*{firstName}" required>
@@ -26,7 +26,7 @@
                     <input type="email" id="email" class="form-control" th:field="*{email}" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Зберегти зміни</button>
-                <a href="/profile" class="btn btn-outline-secondary ms-2">Скасувати</a>
+                <a href="/user/profile" class="btn btn-outline-secondary ms-2">Скасувати</a>
             </form>
         </div>
     </div>

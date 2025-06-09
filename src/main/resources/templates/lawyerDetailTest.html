@@ -3,6 +3,12 @@
 <head>
     <title>Профіль користувача</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JS (разом з Popper) -->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>-->
 </head>
 <body>
 <div th:replace="~{fragments/header :: body}"></div>
@@ -11,55 +17,462 @@
 <div class="container mt-5">
     <div class="card shadow-lg p-4">
         <div class="row">
+            <div class="row">
+                <div class="col-md-3 text-center border-end">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                         class="rounded-circle mb-3 img-fluid"
+                         style="width: 120px;">
+                    <h5 class="fw-bold mt-2" th:text="${lawyer.firstName} + ' ' + ${lawyer.lastName}"></h5>
+                    <span class="badge bg-success">Онлайн</span>
+                    <br/>
+                    <span class="badge bg-secondary mt-2"
+                          th:text="${averageRating != null ? (averageRating + '⭐' ) : 'Немає оцінок'}"></span>
+
+                    <div class="mt-4 d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" id="btnShowLawyerInfo">
+                            Інформація про юриста
+                        </button>
+                        <button type="button" class="btn btn-outline-success" id="btnShowLawyerReview">
+                            Відгуки
+                        </button>
+                        <a th:href="@{'/chat?recipientId=' + ${lawyer.id}}" class="btn btn-primary">
+                            <i class="bi bi-chat-dots"></i> Написати повідомлення
+                        </a>
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderModal">
+                            <i class="bi bi-file-earmark-plus"></i> Надіслати замовлення
+                        </button>
+                    </div>
+                </div>
             <!-- Аватар -->
-            <div class="col-md-3 text-center">
-                <img src="/images/lawyers/default.jpg" class="rounded-circle img-fluid mb-3" alt="Аватар юриста" style="width: 150px; height: 150px;">
-                <h5 class="fw-bold mt-2">Адв. Іван Петров</h5>
-                <span class="badge bg-success">Онлайн</span>
-            </div>
+<!--            <div class="col-md-3 text-center">-->
+<!--                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="rounded-circle mb-3"-->
+<!--                     width="120">-->
+<!--                &lt;!&ndash;                <img src="/images/lawyers/default.jpg" class="rounded-circle img-fluid mb-3" alt="Аватар юриста" style="width: 150px; height: 150px;">&ndash;&gt;-->
+<!--                <h5 class="fw-bold mt-2" th:text="${lawyer.firstName} + ' ' + ${lawyer.lastName}"></h5>-->
+<!--                <span class="badge bg-success">Онлайн</span>-->
+<!--                <br/>-->
+<!--                <span class="badge bg-secondary"-->
+<!--                      th:text="${averageRating != null ? (averageRating + '⭐' ) : 'Немає оцінок'}"></span>-->
+<!--            </div>-->
 
-            <!-- Інформація -->
-            <div class="col-md-9">
-                <h4 class="mb-3">Інформація про юриста</h4>
-                <ul class="list-group list-group-flush">
-<!--                    <li class="list-group-item" th:text="${lawyer.specializations}"><strong>Спеціалізація:</strong> Цивільне право, нерухомість</li>-->
-                    <li class="list-group-item" th:text="${lawyer.experience}"><strong>Досвід:</strong> 10 років</li>
-                    <li class="list-group-item" th:text="${lawyer.address}"><strong>Місто:</strong> Київ</li>
-                    <li class="list-group-item" th:text="${lawyer.email}"><strong>Контактний email:</strong> ivan.petrov@example.com</li>
-                    <li class="list-group-item" th:text="${lawyer.phoneNumber}"><strong>Телефон:</strong> +380 (67) 123-45-67</li>
-                    <li class="list-group-item" th:text="${lawyer.portfolio}"><strong>Опис:</strong> Досвідчений адвокат у сфері цивільного та спадкового права. Працюю з фізичними та юридичними особами.</li>
-                </ul>
 
-                <!-- Кнопки -->
-                <div class="mt-4 d-flex gap-3">
-                    <a th:href="@{/lawyers/${lawyer.id}/chat}" class="btn btn-outline-primary">
-                        <i class="bi bi-chat-dots"></i> Написати повідомлення
-                    </a>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal">
-                        <i class="bi bi-file-earmark-plus"></i> Надіслати замовлення
-                    </button>
+<!--            <div class="mb-3 text-center">-->
+<!--                <button type="button" class="btn btn-outline-primary me-2" id="btnShowLawyerInfo">Інформація про юриста-->
+<!--                </button>-->
+<!--                <button type="button" class="btn btn-outline-success" id="btnShowLawyerReview">Відгуки</button>-->
+<!--            </div>-->
+
+<!--            <div class="col-md-9">-->
+<!--                    <ul class="list-group list-group-flush" id="lawyerInfoSection" style="display: none;">-->
+<!--                        &lt;!&ndash;                    <li class="list-group-item" th:text="${lawyer.specializations}"><strong>Спеціалізація:</strong> Цивільне право, нерухомість</li>&ndash;&gt;-->
+<!--                        <li class="list-group-item">Досвід-->
+<!--                            <span th:text="${lawyer.experience}"></span> роки-->
+<!--                        </li>-->
+<!--                        <li class="list-group-item" th:text="${lawyer.address}"><strong>Місто:</strong> Київ</li>-->
+<!--                        <li class="list-group-item" th:text="${lawyer.email}"><strong>Контактний email:</strong>-->
+<!--                            ivan.petrov@example.com-->
+<!--                        </li>-->
+<!--                        <li class="list-group-item" th:text="${lawyer.phoneNumber}"><strong>Телефон:</strong> +380 (67)-->
+<!--                            123-45-67-->
+<!--                        </li>-->
+<!--                        <li class="list-group-item" th:text="${lawyer.portfolio}"><strong>Опис:</strong> Досвідчений-->
+<!--                            адвокат-->
+<!--                            у сфері цивільного та спадкового права. Працюю з фізичними та юридичними особами.-->
+<!--                        </li>-->
+<!--                    </ul>-->
+
+<!--                    <div class="mt-4 d-flex gap-3">-->
+<!--                        <a th:href="@{'/chat?recipientId=' + ${lawyer.id}}" class="btn btn-outline-primary">-->
+<!--                            <i class="bi bi-chat-dots"></i> Написати повідомлення-->
+<!--                        </a>-->
+<!--                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal">-->
+<!--                            <i class="bi bi-file-earmark-plus"></i> Надіслати замовлення-->
+<!--                        </button>-->
+<!--                        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">-->
+<!--                            <i class="bi bi-file-earmark-plus"></i> Переглянути відгуки-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div id="lawyerReviewSection" style="display: none;">-->
+<!--                    <form id="createLawyerReview" th:object="${review}" th:action="@{/user/review/create}"-->
+<!--                          method="post">-->
+<!--                        <div class="mt-4">-->
+<!--                            <h4>Відгуки:</h4>-->
+<!--                            <div th:each="review : ${reviews}" class="card mt-2">-->
+<!--                                <div class="card-body">-->
+<!--                                    <h6>-->
+<!--                                        <strong th:text="${review.sender.lastName}"></strong>-->
+<!--                                        – <span th:text="${review.rating} + ' ⭐'"></span>-->
+<!--                                    </h6>-->
+<!--                                    <p th:text="${review.comment}"></p>-->
+<!--                                    <small th:text="${#dates.format(review.sentAt, 'dd-MM-yyyy HH:mm')}"></small>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <input type="hidden" name="lawyerId" value="123">-->
+<!--                        <div class="modal-footer px-0">-->
+<!--                            <button type="submit" class="btn btn-success">Надіслати</button>-->
+<!--                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+
+                <div class="col-md-9">
+                    <!-- Секція інформації -->
+                    <ul class="list-group list-group-flush" id="lawyerInfoSection" style="display: none;">
+                        <li class="list-group-item">Досвід: <span th:text="${lawyer.experience}"></span> років</li>
+                        <li class="list-group-item">Місто: <span th:text="${lawyer.address}"></span></li>
+                        <li class="list-group-item">Email: <span th:text="${lawyer.email}"></span></li>
+                        <li class="list-group-item">Телефон: <span th:text="${lawyer.phoneNumber}"></span></li>
+                        <li class="list-group-item">Про себе: <span th:text="${lawyer.portfolio}"></span></li>
+                    </ul>
+
+                    <!-- Секція відгуків -->
+                    <div id="lawyerReviewSection" style="display: none;">
+                        <div class="mt-3">
+                            <h4>Відгуки:</h4>
+                            <div th:each="review : ${reviews}" class="card mb-2">
+                                <div class="card-body">
+                                    <h6>
+                                        <strong th:text="${review.sender.lastName}"></strong>
+                                        – <span th:text="${review.rating} + ' ⭐'"></span>
+                                    </h6>
+                                    <p th:text="${review.comment}"></p>
+                                    <small th:text="${#dates.format(review.sentAt, 'dd-MM-yyyy HH:mm')}"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Форма надсилання відгуку -->
+                        <form id="createLawyerReview" th:object="${review}" th:action="@{/user/review/create}" method="post" class="mt-4">
+                            <input type="hidden" name="lawyerId" th:value="${lawyer.id}">
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Оцінка</label>
+                                <select class="form-select" id="rating" th:field="*{rating}">
+                                    <option value="5">5 ⭐</option>
+                                    <option value="4">4 ⭐</option>
+                                    <option value="3">3 ⭐</option>
+                                    <option value="2">2 ⭐</option>
+                                    <option value="1">1 ⭐</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Коментар</label>
+                                <textarea class="form-control" id="comment" rows="3" th:field="*{comment}" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Надіслати відгук</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderModalLabel">Замовлення</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3 text-center">
+                        <button type="button" class="btn btn-outline-primary me-2" id="btnShowList">Список замовлень
+                        </button>
+                        <button type="button" class="btn btn-outline-success" id="btnShowForm">Створити замовлення
+                        </button>
+                    </div>
+
+                    <div id="orderListSection" style="display: none;">
+                        <ul class="list-group" id="orderList" th:each="order : ${orders}">
+                            <li class="list-group-item">
+                            <span th:classappend="'badge bg-secondary'"
+                                  th:text="${#dates.format(order.createdAt, 'dd-MM-yyyy')}"></span>
+                                -
+                                <span th:text="${order.subject}"></span>
+                                -
+                                <span th:classappend="'badge bg-secondary'" th:text="${order.price}"> </span>
+                                -
+                                <h5 th:classappend="${order.status == 'NEW'} ? 'badge bg-success' : 'badge bg-secondary'"
+                                    th:text="${order.status}"></h5>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="orderFormSection">
+                        <form id="createOrderForm" th:object="${order}" th:action="@{/user/orders/create}"
+                              method="post">
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Заголовок</label>
+                                <input type="text" class="form-control" id="subject" th:field="*{subject}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="specialization" class="form-label">Спеціалізація</label>
+                                <select class="form-select" name="specialization" th:field="*{specialization}"
+                                        id="specialization">
+                                    <option th:each="spec : ${specializations}"
+                                            th:value="${spec.id}"
+                                            th:text="${spec.specializationName}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Опис ситуації</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="4"
+                                          required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price">Очікувана вартість (в гривнях)</label>
+                                <input type="text" class="form-control" id="price" th:field="*{price}" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="communicationFormat" class="form-label">Формат спілкування
+                                    <select class="form-select" id="communicationFormat" name="communicationFormat"
+                                            th:field="*{communicationFormat}">
+                                        <option th:each="format : ${communicationFormats}"
+                                                th:value="${format}"
+                                                th:text="${format}">Формат
+                                        </option>
+                                    </select>
+                                </label><br/>
+                            </div>
+                            <input type="hidden" name="lawyerId" value="123">
+                            <div class="modal-footer px-0">
+                                <button type="submit" class="btn btn-success">Надіслати</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog modal-lg">-->
+<!--            <div class="modal-content">-->
+
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="reviewModalLabel">Відгуки</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+<!--                </div>-->
+
+<!--                <div class="modal-body">-->
+<!--                    <div id="reviewFormSection">-->
+<!--                        <form id="createReviewForm" th:object="${review}"-->
+<!--                              th:action="@{'/reviews/' + ${lawyer.id} + '/create'}" method="post">-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="rating">Оцінка (1-5)</label>-->
+<!--                                <select class="form-select" name="rating" id="rating" required>-->
+<!--                                    <option value="1">1 ⭐</option>-->
+<!--                                    <option value="2">2 ⭐⭐</option>-->
+<!--                                    <option value="3">3 ⭐⭐⭐</option>-->
+<!--                                    <option value="4">4 ⭐⭐⭐⭐</option>-->
+<!--                                    <option value="5">5 ⭐⭐⭐⭐⭐</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div class="mb-3">-->
+<!--                                <label for="comment">Коментар</label>-->
+<!--                                <textarea class="form-control" th:field="*{comment}" name="comment" id="comment"-->
+<!--                                          required></textarea>-->
+<!--                            </div>-->
+<!--                            <button type="submit" class="btn btn-primary">Залишити відгук</button>-->
+
+<!--                            <input type="hidden" name="lawyerId" value="123">-->
+<!--                            <div class="modal-footer px-0">-->
+<!--                                <button type="submit" class="btn btn-success">Надіслати</button>-->
+<!--                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
+
+
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </body>
 
+
 <script>
-    $('#createOrderForm').on('submit', function (e) {
-        e.preventDefault();
+    $(document).ready(function () {
+        $('#btnShowLawyerInfo').on('click', function () {
+            $('#lawyerInfoSection').show();
+            $('#lawyerReviewSection').hide();
+        });
 
-        const data = $(this).serialize();
+        $('#btnShowLawyerReview').on('click', function () {
+            $('#lawyerReviewSection').show();
+            $('#lawyerInfoSection').hide();
+        });
 
-        $.post('/orders/send', data)
-            .done(function () {
-                $('#orderModal').modal('hide');
-                alert('Замовлення успішно надіслано!');
-            })
-            .fail(function () {
-                alert('Помилка при надсиланні замовлення.');
+        // Початковий стан — показати інформацію про юриста
+        $('#btnShowLawyerInfo').click();
+    });
+</script>
+
+<script>
+    // $('#createOrderForm').on('submit', function (e) {
+    //     e.preventDefault();
+    //
+    //     const data = $(this).serialize();
+    //
+    //     $.post('/lawyers' + '/send', data)
+    //         .done(function () {
+    //             $('#orderModal').modal('hide');
+    //             alert('Замовлення успішно надіслано!');
+    //         })
+    //         .fail(function () {
+    //             alert('Помилка при надсиланні замовлення.');
+    //         });
+    // });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        $('#createOrderForm').submit(function (event) {
+            event.preventDefault(); // скасовуємо стандартне відправлення
+
+            let formData = $(this).serialize();
+            //
+            // const data = {
+            //     email: emailVal,
+            //     password: passwordVal,
+            //     role: roleVal,
+            //     firstName: firstNameVal,
+            //     lastName: lastNameVal,
+            //     confirmPassword: confirmPasswordVal
+            // };
+            //     url: '/register',
+
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function (response) {
+                    $('#createOrderForm')[0].reset();
+                    // window.location.href = '/profile'; // редірект на захищену сторінку
+                    // updateOrderList(response);
+
+                    // $('#orderListSection').show();
+                },
+                error: function (xhr) {
+                    alert('Помилка під час створення замовлення');
+                }
             });
+        });
+
+
+        const btnShowList = document.getElementById("btnShowList");
+        const btnShowForm = document.getElementById("btnShowForm");
+        const listSection = document.getElementById("orderListSection");
+        const formSection = document.getElementById("orderFormSection");
+
+        btnShowList.addEventListener("click", function () {
+            listSection.style.display = "block";
+            formSection.style.display = "none";
+
+            btnShowList.classList.remove('btn-outline-primary');
+            btnShowList.classList.add('btn-primary');
+
+            btnShowForm.classList.remove('btn-success');
+            btnShowForm.classList.add('btn-outline-success');
+        });
+
+        btnShowForm.addEventListener("click", function () {
+            listSection.style.display = "none";
+            formSection.style.display = "block";
+
+
+            btnShowForm.classList.remove('btn-outline-success');
+            btnShowForm.classList.add('btn-success');
+
+            btnShowList.classList.remove('btn-primary');
+            btnShowList.classList.add('btn-outline-primary');
+        });
+
+        const modalOrder = document.getElementById("orderModal");
+        modalOrder.addEventListener('shown.bs.modal', function () {
+            btnShowForm.click();
+        });
+
+        //
+        // const btnShowLawyerInfo = document.getElementById("btnShowLawyerInfo");
+        // const btnShowLawyerReviews = document.getElementById("btnShowLawyerReviews");
+        // const lawyerInfoSection = document.getElementById("lawyerInfoSection");
+        // const lawyerReviewSection = document.getElementById("lawyerReviewSection");
+        //
+        // btnShowLawyerInfo.addEventListener("click", function () {
+        //     lawyerInfoSection.style.display = "block";
+        //     lawyerReviewSection.style.display = "none";
+        //
+        //     btnShowLawyerInfo.classList.remove('btn-outline-primary');
+        //     btnShowLawyerInfo.classList.add('btn-primary');
+        //
+        //     btnShowLawyerReviews.classList.remove('btn-success');
+        //     btnShowLawyerReviews.classList.add('btn-outline-success');
+        // });
+
+        btnShowLawyerReviews.addEventListener("click", function () {
+            lawyerInfoSection.style.display = "none";
+            lawyerReviewSection.style.display = "block";
+
+
+            btnShowLawyerReviews.classList.remove('btn-outline-success');
+            btnShowLawyerReviews.classList.add('btn-success');
+
+            btnShowLawyerReviews.classList.remove('btn-primary');
+            btnShowLawyerReviews.classList.add('btn-outline-primary');
+        });
+
+
+        const modalReview = document.getElementById("reviewModal");
+        modalReview.addEventListener('shown.bs.modal', function () {
+            btnShowForm.click();
+        });
+
+        $('#createReviewForm').submit(function (event) {
+            event.preventDefault();
+
+            let formData = $(this).serialize();
+            //
+            // const data = {
+            //     email: emailVal,
+            //     password: passwordVal,
+            //     role: roleVal,
+            //     firstName: firstNameVal,
+            //     lastName: lastNameVal,
+            //     confirmPassword: confirmPasswordVal
+            // };
+            //     url: '/register',
+
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function (response) {
+                    $('#createReviewForm')[0].reset();
+                    // updateOrderList(response);
+
+                    // $('#orderListSection').show();
+                },
+                error: function (xhr) {
+                    alert('Помилка під час створення замовлення');
+                }
+            });
+        });
     });
 </script>
 </html>

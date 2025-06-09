@@ -45,6 +45,7 @@
                 <div class="text-center mt-3">
                     <a href="/login">Вже є акаунт? Увійти</a>
                 </div>
+                <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
             </form>
             <div style="color: red;">[[${error}]]</div>
         </div>
@@ -53,22 +54,38 @@
 
 
 
-
-
 <script>
     $(document).ready(function () {
         $('#registerForm').on('submit', function (e) {
             e.preventDefault();
 
+            let emailVal = $('input[name="email"]').val();
+            let passwordVal = $('input[name="password"]').val();
+            let roleVal = $('select[name="role"]').val();
+            let firstNameVal = $('input[name="firstName"]').val();
+            let lastNameVal = $('input[name="lastName"]').val();
+            let confirmPasswordVal = $('input[name="confirmPassword"]').val();
+
+            $('#errorMessage').text('');
+
+            if ((emailVal == null || emailVal == "") || (passwordVal == null || passwordVal == "") || (roleVal == null || roleVal == "") || (firstNameVal == null || firstNameVal == "") || (lastNameVal == null || lastNameVal == "") || (confirmPasswordVal == null || confirmPasswordVal == "")) {
+                $('#errorMessage').text('Заповніть усі поля!');
+                return;
+            }
+
             const data = {
-                email: $('input[name="email"]').val(),
-                password: $('input[name="password"]').val(),
-                role: $('select[name="role"]').val(),
-                firstName: $('input[name="firstName"]').val(),
-                lastName: $('input[name="lastName"]').val(),
-                confirmPassword: $('input[name="confirmPassword"]').val()
+                email: emailVal,
+                password: passwordVal,
+                role: roleVal,
+                firstName: firstNameVal,
+                lastName: lastNameVal,
+                confirmPassword: confirmPasswordVal
             };
 
+            if (passwordVal !== confirmPasswordVal) {
+                $('#errorMessage').text('Паролі не співпадають.');
+                return;
+            }
             $.ajax({
                 url: '/register',
                 method: 'POST',
@@ -79,11 +96,12 @@
                         localStorage.setItem('jwtToken', response.token);
                         window.location.href = '/profile'; // редірект на захищену сторінку
                     } else {
-                        alert("Невідома відповідь від сервера");
+                        $('#errorMessage').text('Невідома відповідь від сервера.');
                     }
                 },
                 error: function (xhr) {
-                    alert(xhr.responseText || 'Помилка при реєстрації');
+                    const errorText = xhr.responseText || 'Помилка при реєстрації';
+                    $('#errorMessage').text(errorText);
                 }
             });
         });
