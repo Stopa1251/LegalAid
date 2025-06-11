@@ -48,6 +48,16 @@
             <input type="text" th:field="*{phoneNumber}" class="form-control" id="phoneNumber">
         </div>
         <div class="mb-3">
+            <label for="specialization">Спеціалізація</label>
+            <select class="form-select" name="specialization"
+                    id="specialization">
+                <option th:each="spec : ${specializations}"
+                        th:value="${spec.id}"
+                        th:text="${spec.specializationName}">
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
             <label for="experience">Досвід (років)</label>
             <input type="number" th:field="*{experience}" class="form-control" id="experience">
         </div>

@@ -15,11 +15,11 @@
             <form th:action="@{/user/profile/edit}" method="post" th:object="${user}">
                 <div class="mb-3">
                     <label for="firstName" class="form-label">Ім'я</label>
-                    <input type="text" id="firstName" class="form-control" th:field="*{firstName}" required>
+                    <input type="text" id="firstName"  class="form-control" th:field="*{firstName}" required>
                 </div>
                 <div class="mb-3">
                     <label for="lastName" class="form-label">Прізвище</label>
-                    <input type="text" id="lastName" class="form-control" th:field="*{lastName}" required>
+                    <input type="text" id="lastName"  class="form-control" th:field="*{lastName}" required>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>

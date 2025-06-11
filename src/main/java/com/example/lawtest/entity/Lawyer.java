@@ -1,10 +1,6 @@
 package com.example.lawtest.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-//import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,19 +8,20 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "lawyers")
-@Indexed
 public class Lawyer extends User {
     private float experience;
-    @FullTextField(analyzer = "ukrainian")
+
+//    @Lob
+    @Column(length = 1000)
     private String portfolio;
 //    @OneToMany(mappedBy = "specialization", cascade = CascadeType.ALL)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
+//    @ManyToMany
     @JoinTable(
         name = "lawyer_specializations",
         joinColumns = @JoinColumn(name = "lawyer_id"),
         inverseJoinColumns = @JoinColumn(name = "specialization_id")
     )
-//    @FullTextField(analyzer = "ukrainian")
     private List<Specialization> specializations;
     private double rating;
     private String licenseNo;
@@ -98,6 +95,12 @@ public class Lawyer extends User {
         if (specializations == null || specializations.isEmpty()) {
             return "Немає спеціалізацій";
         }
+//        String specializationsString;
+//        for(int i = 0; i < specializations.size(); i++) {
+//            specializations
+//        }
+
+
         return specializations.stream()
                 .map(Specialization::getSpecializationName)
                 .collect(Collectors.joining(", "));

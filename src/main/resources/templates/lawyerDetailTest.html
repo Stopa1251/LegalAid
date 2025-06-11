@@ -122,6 +122,12 @@
                     <!-- Секція інформації -->
                     <ul class="list-group list-group-flush" id="lawyerInfoSection" style="display: none;">
                         <li class="list-group-item">Досвід: <span th:text="${lawyer.experience}"></span> років</li>
+                        <th:block th:if="${lawyer.specializations != null}">
+                            <ul>
+                                Спеціалізація:
+                                <li th:each="s : ${lawyer.specializations}" th:text="${s.specializationName}"></li>
+                            </ul>
+                        </th:block>
                         <li class="list-group-item">Місто: <span th:text="${lawyer.address}"></span></li>
                         <li class="list-group-item">Email: <span th:text="${lawyer.email}"></span></li>
                         <li class="list-group-item">Телефон: <span th:text="${lawyer.phoneNumber}"></span></li>
@@ -135,7 +141,7 @@
                             <div th:each="review : ${reviews}" class="card mb-2">
                                 <div class="card-body">
                                     <h6>
-                                        <strong th:text="${review.sender.lastName}"></strong>
+                                        <strong th:text="${review.sender.firstName}"></strong>
                                         – <span th:text="${review.rating} + ' ⭐'"></span>
                                     </h6>
                                     <p th:text="${review.comment}"></p>
@@ -145,7 +151,7 @@
                         </div>
 
                         <!-- Форма надсилання відгуку -->
-                        <form id="createLawyerReview" th:object="${review}" th:action="@{/user/review/create}" method="post" class="mt-4">
+                        <form id="createLawyerReview" th:object="${review}" th:action="@{'/reviews/' + ${lawyer.id} + '/create'}" method="post" class="mt-4">
                             <input type="hidden" name="lawyerId" th:value="${lawyer.id}">
                             <div class="mb-3">
                                 <label for="rating" class="form-label">Оцінка</label>

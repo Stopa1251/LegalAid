@@ -22,8 +22,8 @@ public class Order {
 //    @FullTextField(analyzer = "ukrainian")
     private String subject;
 
-    @Lob
-//    @FullTextField(analyzer = "ukrainian")
+//    @Lob
+    @Column(length = 1000)
     private String description;
 
 //    @OneToOne(mappedBy = "assignedLawyer", cascade = CascadeType.ALL)

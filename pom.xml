@@ -29,7 +29,7 @@
     <properties>
         <java.version>17</java.version>
 <!--        <hibernate.version>7.0.0 Final</hibernate.version>-->
-        <hibernate.search.version>8.0.0.Final</hibernate.search.version>
+<!--        <hibernate.search.version>6.2.0.Final</hibernate.search.version>-->
     </properties>
     <dependencies>
         <dependency>
@@ -199,25 +199,17 @@
         <!-- Hibernate ORM -->
 
 
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>7.0.0.Final</version>
-            <type>pom</type>
-        </dependency>
-
         <!-- Hibernate Search 8 -->
-        <dependency>
-            <groupId>org.hibernate.search</groupId>
-            <artifactId>hibernate-search-mapper-orm</artifactId>
-            <version>${hibernate.search.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.search</groupId>
-            <artifactId>hibernate-search-backend-lucene</artifactId>
-            <version>${hibernate.search.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate.search</groupId>-->
+<!--            <artifactId>hibernate-search-mapper-orm</artifactId>-->
+<!--            <version>${hibernate.search.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate.search</groupId>-->
+<!--            <artifactId>hibernate-search-backend-lucene</artifactId>-->
+<!--            <version>${hibernate.search.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

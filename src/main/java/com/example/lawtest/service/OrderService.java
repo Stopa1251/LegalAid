@@ -1,6 +1,7 @@
 package com.example.lawtest.service;
 
 import com.example.lawtest.entity.Order;
+import com.example.lawtest.entity.Specialization;
 import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.OrderRepository;
 import com.example.lawtest.repository.UserRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -68,5 +70,18 @@ public class OrderService {
 
     public List<Order> getOrdersBetweenLawyerAndClient(Long lawyerId, Long clientId) {
         return orderRepository.findByLawyerIdAndClientId(lawyerId, clientId);
+    }
+
+
+    public List<Order> searchOrders(String address, String status, String keyword,
+                                    String startDate, String endDate,
+                                    String specialization) {
+        return orderRepository.searchOrders(
+                address, status,
+                keyword == null || keyword.isBlank() ? null : keyword,
+                startDate, endDate,
+                specialization == null || specialization.isBlank() ? null : specialization
+        );
+//                (address, status, keyword, startDate, endDate, specialization);
     }
 }

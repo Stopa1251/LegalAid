@@ -5,6 +5,7 @@ import com.example.lawtest.entity.Order;
 import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.LawyerRepository;
 import com.example.lawtest.repository.OrderRepository;
+import com.example.lawtest.repository.SpecializationRepository;
 import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.service.UserService;
 import com.example.lawtest.service.UserServiceImpl;
@@ -40,6 +41,8 @@ public class UserController {
 
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private SpecializationRepository specializationRepository;
 
     @GetMapping("/profile")
     public String showProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -108,6 +111,7 @@ public class UserController {
         } else if (user.getRole() == User.Role.ROLE_LAWYER && user instanceof Lawyer) {
             Lawyer lawyer = lawyerRepository.findByEmail(userDetails.getUsername()).orElse(null);
             model.addAttribute("user", lawyer);
+            model.addAttribute("specializations", specializationRepository.findAll());
             return "/editLawyerProfile";
         } else {
             return "redirect:/login";

@@ -21,8 +21,8 @@ public class ReviewService {
     public Review addReview(User sender, User receiver, String comment, int rating) {
         Review review = new Review();
 
-        review.setReceiver(sender);
-        review.setSender(receiver);
+        review.setReceiver(receiver);
+        review.setSender(sender);
         review.setComment(comment);
         review.setRating(rating);
         return reviewRepository.save(review);

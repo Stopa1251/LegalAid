@@ -18,35 +18,44 @@
             <div>Рейтинг: <span th:text="${lawyer.rating}"></span></div>
             <div>Ліцензія: <span th:text="${lawyer.licenseNo}"></span></div>
             <div>Портфоліо: <span th:text="${lawyer.portfolio}"></span></div>
-            <div>
-                <span th:if="${lawyer.verified}" class="badge bg-success">Підтверджено</span>
-                <span th:if="${!lawyer.verified}" class="badge bg-warning text-dark">Очікує перевірки</span>
+            <div>Спеціалізація:
+                <th:block th:if="${lawyer.specializations != null}">
+                    <ul>
+                        Спеціалізація:
+                        <li th:each="s : ${lawyer.specializations}" th:text="${s.specializationName}"></li>
+                    </ul>
+                </th:block>
             </div>
-            <!--                    <img th:src="@{/lawyers/avatar/{id}(id=${lawyer.id})}" class="img-fluid rounded-circle" alt="Аватар" style="max-height: 120px;">-->
-            <!--                    <img th:src="${lawyer.profileImagePath != null ? lawyer.profileImagePath : '/images/default-avatar.png'}"-->
-            <!--                         alt="Аватар"-->
-            <!--                         class="rounded-circle"-->
-            <!--                         style="width: 60px; height: 60px; object-fit: cover;">-->
-
-            <!--                        <div>-->
-            <!--                            Спеціалізації:-->
-            <!--                            <div th:each="specialization : ${lawyer.specializations}">-->
-            <!--                                <span th:text="${lawyer.getSpecializationsString()}" class="badge bg-info text-dark"></span>-->
-            <!--                            </div>-->
-            <!--                                Спеціалізації:-->
-            <!--                                <span th:each="spec : ${lawyer.specializations}"-->
-            <!--                                      th:text="${spec.specializationName}"-->
-            <!--                                      class="badge bg-info text-dark me-1"></span>-->
-            <!--                        </div>-->
-
-            <!--                        <form th:action="@{/lawyers/avatar/delete/{id}(id=${lawyer.id})}" method="post">-->
-            <!--                            <button type="submit" class="btn btn-sm btn-outline-danger mt-2">Видалити фото</button>-->
-            <!--                        </form>-->
-            <a href="/user/profile/edit" class="btn btn-outline-primary">Редагувати профіль</a>
-            <br/>
-            <a class="btn" href="/logout">Вийти</a>
         </div>
+        <div>
+            <span th:if="${lawyer.verified}" class="badge bg-success">Підтверджено</span>
+            <span th:if="${!lawyer.verified}" class="badge bg-warning text-dark">Очікує перевірки</span>
+        </div>
+        <!--                    <img th:src="@{/lawyers/avatar/{id}(id=${lawyer.id})}" class="img-fluid rounded-circle" alt="Аватар" style="max-height: 120px;">-->
+        <!--                    <img th:src="${lawyer.profileImagePath != null ? lawyer.profileImagePath : '/images/default-avatar.png'}"-->
+        <!--                         alt="Аватар"-->
+        <!--                         class="rounded-circle"-->
+        <!--                         style="width: 60px; height: 60px; object-fit: cover;">-->
+
+        <!--                        <div>-->
+        <!--                            Спеціалізації:-->
+        <!--                            <div th:each="specialization : ${lawyer.specializations}">-->
+        <!--                                <span th:text="${lawyer.getSpecializationsString()}" class="badge bg-info text-dark"></span>-->
+        <!--                            </div>-->
+        <!--                                Спеціалізації:-->
+        <!--                                <span th:each="spec : ${lawyer.specializations}"-->
+        <!--                                      th:text="${spec.specializationName}"-->
+        <!--                                      class="badge bg-info text-dark me-1"></span>-->
+        <!--                        </div>-->
+
+        <!--                        <form th:action="@{/lawyers/avatar/delete/{id}(id=${lawyer.id})}" method="post">-->
+        <!--                            <button type="submit" class="btn btn-sm btn-outline-danger mt-2">Видалити фото</button>-->
+        <!--                        </form>-->
+        <a href="/user/profile/edit" class="btn btn-outline-primary">Редагувати профіль</a>
+        <br/>
+        <a class="btn" href="/logout">Вийти</a>
     </div>
+</div>
 </div>
 
 

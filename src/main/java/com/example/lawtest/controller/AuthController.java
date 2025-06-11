@@ -52,7 +52,7 @@ public class AuthController {
     public ResponseEntity<?> register(@ModelAttribute UserRegistrationDto registrationRequest, Model model) {
         try {
             if (userRepository.existsByEmail(registrationRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Email is already in use!");
+                return ResponseEntity.badRequest().body("Користувач з такою поштою вже зареєстрований!");
             }
 
             userService.register(registrationRequest);

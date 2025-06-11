@@ -6,6 +6,7 @@ import com.example.lawtest.entity.Order;
 import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.OrderRepository;
 import com.example.lawtest.repository.MessageRepository;
+import com.example.lawtest.repository.SpecializationRepository;
 import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,14 @@ public class OrderController {
     private UserRepository userRepository;
     @Autowired
     private MessageRepository messageRepository;
-
+    @Autowired
+    private SpecializationRepository specializationRepository;
 
 
     @GetMapping("/{id}")
     public String orderDetail(@PathVariable Long id, Model model) {
         model.addAttribute("order", orderRepository.findById(id).orElse(null));
+        model.addAttribute("specializations", specializationRepository.findAll());
         return "orderDetail";
     }
 

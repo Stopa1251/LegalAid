@@ -30,6 +30,73 @@
 <!--</body>-->
 <!--</html>-->
 
+<section class="py-5 bg-light border-top border-bottom shadow-sm">
+    <div class="container">
+        <div class="bg-white p-4 rounded-3 shadow-sm">
+            <h4 class="mb-4 text-center text-primary">Пошук юристів</h4>
+            <form action="/lawyers/search" method="get" class="row g-3">
+                <!-- Ключове слово -->
+                <div class="col-md-4">
+                    <label for="q" class="form-label">Ключове слово</label>
+                    <input type="text" class="form-control" name="q" id="q" placeholder="Наприклад: розлучення, спадщина..." th:value="${keyword}" />
+                </div>
+
+                <!-- Спеціалізація -->
+                <div class="col-md-4">
+                    <label for="specialization" class="form-label">Спеціалізація</label>
+                    <select class="form-select" name="specialization" id="specialization" th:field="*{specializations}">
+                        <option value="">-- Усі спеціалізації --</option>
+                        <option th:each="specialization : ${specializations}"
+                                th:value="${specialization.specializationName}"
+                                th:text="${specialization.specializationName}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Мінімальний рейтинг -->
+                <div class="col-md-2">
+                    <label for="minRating" class="form-label">Мін. рейтинг</label>
+                    <input type="number" step="0.1" min="0" max="5" class="form-control" name="minRating" id="minRating" placeholder="0–5" />
+                </div>
+
+                <!-- Тільки активні -->
+                <div class="col-md-2 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="active" id="active" value="true" />
+                        <label class="form-check-label" for="active">
+                            Тільки активні
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Кнопка пошуку -->
+                <div class="col-12 text-center pt-2">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-search"></i> Шукати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!--<form action="/search" method="get">-->
+<!--    <input class="form-label" type="text" name="q" placeholder="Пошук..." th:value="${keyword}" />-->
+<!--    <select class="form-label" th:field="*{specializations}" name="specialization">-->
+<!--        <option th:each="specialization : ${specializations}"-->
+<!--                th:value="${specialization.specializationName}"-->
+<!--                th:text="${specialization.specializationName}">Спеціалізація-->
+<!--        </option>-->
+<!--    </select>-->
+
+<!--    <input class="form-label" type="number" name="minRating" step="0.1" placeholder="Мін. рейтинг" />-->
+
+<!--    <label><input class="form-label" type="checkbox" name="active" value="true" /> Тільки активні</label>-->
+
+<!--    <button type="submit">Шукати</button>-->
+<!--</form>-->
+
+
 <div class="container mt-5">
     <h2 class="mb-4">Список юристів</h2>
     <div th:each="lawyer : ${lawyers}">
@@ -48,8 +115,19 @@
                         <h5 th:text="|${lawyer.firstName} ${lawyer.lastName}|"></h5>
                         <div>Телефон: <span th:text="${lawyer.phoneNumber}">Немає</span></div>
                         <div>Досвід: <span th:text="${lawyer.experience}"></span> років</div>
+<!--                        <div> Спеціалізація:-->
+<!--                            <span th:each="spec : ${lawyer.specializations}"-->
+<!--                                th:value="${spec.id}"-->
+<!--                                th:text="${spec.specializationName}">-->
+<!--                            </span>-->
+<!--                        </div>-->
+                        <th:block th:if="${lawyer.specializations != null}">
+                            <ul>
+                                Спеціалізація:
+                                <li th:each="s : ${lawyer.specializations}" th:text="${s.specializationName}"></li>
+                            </ul>
+                        </th:block>
                         <div>Рейтинг: <span th:text="${lawyer.rating}"></span></div>
-                        <div>Ліцензія: <span th:text="${lawyer.licenseNo}"></span></div>
                         <div>Портфоліо: <span th:text="${#strings.abbreviate(lawyer.portfolio, 100)}"></span></div>
 <!--                        <div>-->
 <!--                            Спеціалізації:-->

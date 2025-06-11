@@ -6,6 +6,7 @@ import com.example.lawtest.entity.User;
 import com.example.lawtest.repository.ReviewRepository;
 import com.example.lawtest.repository.UserRepository;
 import com.example.lawtest.service.ReviewService;
+import com.example.lawtest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,10 @@ public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/{receiverId}/create")
     public String createOrder(Model model) {
@@ -40,9 +45,13 @@ public class ReviewController {
     public String saveOrder(
             @ModelAttribute Review review,
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long id
+            @PathVariable Long receiverId
     ) throws IOException {
-        Review created = reviewService.addReview(review.getSender(), review.getReceiver(), review.getComment(), review.getRating());
+        System.out.println(userService.findByEmail(userDetails.getUsername()).getLastName());
+        System.out.println(userRepository.getUsersById(receiverId).getLastName());
+        System.out.println(review.getComment());
+        System.out.println(review.getRating());
+        Review created = reviewService.addReview(userService.findByEmail(userDetails.getUsername()), userRepository.getUsersById(receiverId), review.getComment(), review.getRating());
         return "redirect:/reviews";
     }
 

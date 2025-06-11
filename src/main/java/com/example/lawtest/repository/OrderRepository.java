@@ -1,12 +1,14 @@
 package com.example.lawtest.repository;
 
 import com.example.lawtest.entity.Order;
+import com.example.lawtest.entity.Specialization;
 import com.example.lawtest.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +48,27 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "AND o.client.id = :clientId")
     List<Order> findByLawyerIdAndClientId(@Param("lawyerId") Long lawyerId, @Param("clientId") Long clientId);
 
-    Object findByClient(User client);
+    List<Order> findByClient(User client);
 
-
+    @Query("SELECT o FROM Order o " +
+            "WHERE (LOWER(o.client.address) LIKE LOWER(CONCAT('%', :address, '%'))) " +
+            "AND (o.status = :status) " +
+            "AND (LOWER(o.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(o.client.address) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(o.subject) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(o.client.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(o.client.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(o.specialization.specializationName) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:startDate IS NULL OR o.createdAt >= :startDate) " +
+            "AND (:endDate IS NULL OR o.createdAt <= :endDate) " +
+            "AND (:specialization IS NULL OR o.specialization.specializationName = :specialization)")
+    List<Order> searchOrders(
+            @Param("address") String address,
+            @Param("status") String status,
+            @Param("keyword") String keyword,
+            @Param("startDate") String startDate,
+            @Param("endDate") String endDate,
+            @Param("specialization") String specialization
+    );
 
 }

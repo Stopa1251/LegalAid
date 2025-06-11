@@ -10,7 +10,7 @@
 <div class="container mt-5">
     <div class="card mx-auto shadow" style="max-width: 700px;">
         <div class="card-body">
-            <h4 class="card-title mb-4">Створення нового запиту</h4>
+            <h4 class="card-title mb-4">Створення нового замовлення</h4>
             <form th:action="@{/user/orders/create}" method="post" enctype="multipart/form-data" th:object="${order}">
                 <div class="mb-3">
                     <label>Заголовок: <input type="text" th:field="*{subject}" required/></label><br/>
@@ -18,7 +18,7 @@
                 <div class="mb-3">
 <!--                    <label>Категорія: <input type="text" th:field="*{specialization}" required/></label><br/>-->
                         <label for="specialization">Спеціалізація:</label>
-                        <select th:field="*{specialization}" id="specialization">
+                        <select th:field="*{specialization}" id="specialization" class="form-label">
                             <option th:each="spec : ${specializations}"
                                     th:value="${spec.id}"
                                     th:text="${spec.specializationName}">
@@ -26,12 +26,12 @@
                         </select>
                 </div>
                 <div class="mb-3">
-                    <label>Очікувана вартість (в гривнях): <input type="text" th:field="*{price}"
+                    <label>Очікувана вартість (в гривнях): <input type="text" th:field="*{price}" class="form-label"
                                                                   required/></label><br/>
                 </div>
                 <div class="mb-3">
                     <label>Формат спілкування:
-                        <select th:field="*{communicationFormat}" id="communicationFormat">
+                        <select th:field="*{communicationFormat}" id="communicationFormat" class="form-label" >
                             <option th:each="format : ${communicationFormats}"
                                     th:value="${format}"
                                     th:text="${format}">Формат
@@ -60,7 +60,7 @@
                 <!--                        <option value="Кримінальне право">Кримінальне право</option>-->
                 <!--                    </select>-->
                 <!--                </div>-->
-                <button type="submit" class="btn btn-success">Надіслати запит</button>
+                <button type="submit" class="btn btn-success">Створити замовлення</button>
                 <a href="/user/orders" class="btn btn-outline-secondary ms-2">Скасувати</a>
             </form>
         </div>
